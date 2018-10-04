@@ -2,11 +2,13 @@
 const {mangoose} = require('./../server/db/mongoose');
 const {Todo} = require('./../server/models/todo');
 const {Users} = require('./../server/models/user');
+// const {ObjectId} = require('mongodb');
+
 var id = '5bb5f62d4dd88a17704906c6';
 
 Users.findById(id).then((user)=>{ 
-    (!user)? console.log('Id not found') : console.log('User By Id', user);
-}).catch((e)=>console.log(e)); // if id is in wrong format
+    (!user)? console.log('Id not found') : console.log('User By Id', user); 
+}).catch((e)=>console.log(e)); // if id is in wrong format 
 
 // var id = '5bb6322a33745c1c848f6c8a';
 // if(!ObjectId.isValid(id)){

@@ -30,24 +30,23 @@ app.get('/todos', (req, res)=>{
         res.send({todos});
     }, (e)=>{
         res.status(400).send(e);
-    })
-})
+    });
+});
 
 // GET /todos/1234432
 app.get('/todos/:id', (req, res)=>{
     // res.send(req.params);
-    var id = req.params.id, 
-        msg;
+    var id = req.params.id;
     
     if(!ObjectId.isValid(id)) return res.status(404).send();    
 
     Todo.findById(id).then((todo)=>{
-        if(todo) return res.send({todo}) 
-        else return res.status(404).send() ;        
+        if(!todo) return res.status(404).send() ;        
+        res.send({todo:todo});  // res.send({todo});
     }, (e)=>{        
         return res.status(400).send();
     });
-})
+});
 
 app.listen(3000, ()=>{
     console.log('Started on port 3000');
