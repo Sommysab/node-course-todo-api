@@ -37,8 +37,6 @@ describe('POST /todos', ()=>{
     });
 
     it('should not create todo with invalid body data', (done)=>{
-        // var text ='';
-
         supertest_request(app)
             .post('/todos')
             .send({})

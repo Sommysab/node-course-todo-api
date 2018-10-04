@@ -22,6 +22,15 @@ app.post('/todos', (req, res)=>{
         res.status(400).send(e);  // 400 = bad request header
     })
 });
+// route handler registration
+app.get('/todos', (req, res)=>{
+    Todo.find().then((todos)=>{
+        // res.send(todos);  // passes todos db array=> difficulty to add more properties
+        res.send({todos});
+    }, (e)=>{
+        res.status(400).send(e);
+    })
+})
 
 app.listen(3000, ()=>{
     console.log('Started on port 3000');
