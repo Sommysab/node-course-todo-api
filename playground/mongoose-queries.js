@@ -9,7 +9,7 @@ Users.findById(id).then((user)=>{
 }).catch((e)=>console.log(e)); // if id is in wrong format
 
 // var id = '5bb6322a33745c1c848f6c8a';
-// if(!ObjectId.isValide(id)){
+// if(!ObjectId.isValid(id)){
 //     console.log('ID not valid');
 // }
 

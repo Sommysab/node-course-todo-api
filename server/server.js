@@ -1,6 +1,7 @@
 // Lib Imports
 var express = require('express');  // server setup helper
 var bodyParser = require('body-parser'); // convert string to js format
+var {ObjectId} = require('mongodb');
 // Loc Imports
 var {mongoose}= require('./db/mongoose.js'); // Js destructuring (var from array or obj)
 var {Todo} = require('./models/todo');
@@ -30,6 +31,22 @@ app.get('/todos', (req, res)=>{
     }, (e)=>{
         res.status(400).send(e);
     })
+})
+
+// GET /todos/1234432
+app.get('/todos/:id', (req, res)=>{
+    // res.send(req.params);
+    var id = req.params.id, 
+        msg;
+    
+    if(!ObjectId.isValid(id)) return res.status(404).send();    
+
+    Todo.findById(id).then((todo)=>{
+        if(todo) return res.send({todo}) 
+        else return res.status(404).send() ;        
+    }, (e)=>{        
+        return res.status(400).send();
+    });
 })
 
 app.listen(3000, ()=>{
