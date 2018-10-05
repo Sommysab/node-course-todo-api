@@ -6,8 +6,8 @@
     "start": "node server/server.js",
     "test": "mocha server/**/*.test.js",
     "test-watch": "nodemon --exec \"npm test\""
-
-  }, "engine": {
+  },
+  "engine": {
     "node": "10.11.0"
   },
   "author": "",
@@ -15,12 +15,13 @@
   "devDependencies": {
     "expect": "^1.20.2",
     "mocha": "^5.2.0",
-    "nodemon": "^1.18.4",    
+    "nodemon": "^1.18.4",
     "supertest": "^3.3.0"
   },
   "dependencies": {
     "body-parse": "^0.1.0",
     "express": "^4.16.3",
+    "lodash": "^4.17.11",
     "mongodb": "^3.1.6",
     "mongoose": "^5.3.1"
   },

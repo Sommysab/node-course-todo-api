@@ -1,7 +1,8 @@
 // Lib Imports
-var express = require('express');  // server setup helper
-var bodyParser = require('body-parser'); // convert string to js format
-var {ObjectId} = require('mongodb');
+const _ = require('lodash');
+const express = require('express');  // server setup helper
+const bodyParser = require('body-parser'); // convert string to js format
+const {ObjectId} = require('mongodb');
 // Loc Imports
 var {mongoose}= require('./db/mongoose.js'); // Js destructuring (var from array or obj)
 var {Todo} = require('./models/todo');
@@ -64,6 +65,32 @@ app.listen(port, ()=>{
     console.log(`Started on port ${port}`);
 })
 
+// UPDATING A RESOURCE
+app.patch('/todos/:id', (req,res)=>{
+    var id = req.params.id;
+    var body = _.pick(req.body, ['text', 'completed']); // prpty accessible to user
+    
+    if(!ObjectId.isValid(id)){
+        return res.status(404).send();
+    }
+    
+    if(_.isBoolean(body.completed) && body.completed){
+        body.completedAt = new Date().getTime();
+    }else {
+        body.completed = false;
+        body.completedAt = null;
+    }
+    //findByIdAndUpdate.
+    Todo.findOneAndUpdate(id, {$set: body}, {new: true}).then((todo)=>{
+        if(!todo) return res.status(404).send(); 
+
+        res.send({todo});
+        // res.send({body});
+    }).catch((e)=>{
+        res.status(400).send();
+    });    
+});
+
 module.exports = {app};  // for testing
 
 
@@ -125,4 +152,5 @@ module.exports = {app};  // for testing
 // newUsers.save().then((doc)=>{
 //     console.log('Saved User Email', doc);
 // });
+
 

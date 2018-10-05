@@ -114,7 +114,7 @@ describe('GET /todos/:id', ()=>{
 // VERIFY DELETE ROUTE
 describe('DELETE /todos/:id', ()=>{
     var hexId = todos[1]._id.toHexString();
-    
+
     it('should remove a todo', (done)=>{        
 
         supertest_request(app)
