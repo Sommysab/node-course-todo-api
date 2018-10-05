@@ -14,7 +14,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', { useNewUrlParser: true
         console.log(JSON.stringify(result, undefined, 2));
     });
 
-    // deletMany    
+    // deleteMany    
     // db.db().collection('Todos').deleteMany({text: 'Eat launch'}).then((result)=>{
     //     console.log(result);
     // });

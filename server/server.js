@@ -29,7 +29,7 @@ app.get('/todos', (req, res)=>{
     Todo.find().then((todos)=>{
         // res.send(todos);  // passes todos db array=> difficulty to add more properties
         res.send({todos});
-    }, (e)=>{
+    }).catch((e)=>{
         res.status(400).send(e);
     });
 });
@@ -37,15 +37,26 @@ app.get('/todos', (req, res)=>{
 // GET /todos/1234432
 app.get('/todos/:id', (req, res)=>{
     // res.send(req.params);
-    var id = req.params.id;
-    
+    var id = req.params.id;    
     if(!ObjectId.isValid(id)) return res.status(404).send();    
 
     Todo.findById(id).then((todo)=>{
         if(!todo) return res.status(404).send() ;        
         res.send({todo:todo});  // res.send({todo});
-    }, (e)=>{        
-        return res.status(400).send();
+    }).catch((e)=>{        
+        return res.status(400).send();  // Bad request
+    });
+});
+
+// DELETE POST
+app.delete('/todos/:id', (req, res)=>{
+    var id = req.params.id;
+    if(!ObjectId.isValid(id)) return res.status(404).send();
+    Todo.findByIdAndDelete(id).then((todo)=>{
+        if(!todo) return res.status(404).send();  // if null was return, id was not found
+        res.send({todo}); // assign as an obj|array in obj
+    }).catch((e)=>{
+        res.send(400).send(); // Empty body: bad request
     });
 });
 
@@ -54,20 +65,6 @@ app.listen(port, ()=>{
 })
 
 module.exports = {app};  // for testing
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // // Mongoose Model with attributes

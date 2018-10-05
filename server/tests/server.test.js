@@ -15,7 +15,7 @@ const todos = [{
 }];
 
 
-// before each testing
+// FOR TEST LEARNING PURPOSE, before each testing
 beforeEach((done)=>{
     // Todo.remove({}).then(()=> {
     Todo.deleteMany({}).then(()=> {
@@ -90,7 +90,7 @@ describe('GET /todos', ()=>{
 describe('GET /todos/:id', ()=>{
     it('should return todo doc', (done)=>{
         supertest_request(app)
-            .get(`/todos/${todos[0]._id.toHexString()}`)
+            .get(`/todos/${todos[0]._id.toHexString()}`) // preasignment just for testing purposes?
             .expect(200)
             .expect((res)=>{
                 expect(res.body.todo.text).toBe(todos[0].text)
