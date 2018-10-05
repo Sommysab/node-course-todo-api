@@ -44,16 +44,13 @@ describe('POST /todos', ()=>{
                 if(err){
                     return done(err);
                 }
-                // db check
-                // Todo.find().then((todos)=>{
+                // db check   // Todo.find().then((todos)=>{
                 Todo.find({text}).then((todos)=>{  // find result widh text
                     expect(todos.length).toBe(1); // db document/row = 1
                     expect(todos[0].text).toBe(text);
                     done();
-                }).catch((e)=>{
-                    done(e);
-                })
-            })            
+                }).catch((e)=> done(e) ); 
+            }); 
     });
 
     it('should not create todo with invalid body data', (done)=>{
@@ -112,4 +109,43 @@ describe('GET /todos/:id', ()=>{
             .expect(404)
             .end(done);
     })
+})
+
+// VERIFY DELETE ROUTE
+describe('DELETE /todos/:id', ()=>{
+    var hexId = todos[1]._id.toHexString();
+    
+    it('should remove a todo', (done)=>{        
+
+        supertest_request(app)
+            .delete(`/todos/${hexId}`)
+            .expect(200)
+            .expect((res)=>{
+                expect(res.body.todo._id).toBe(hexId);
+            })
+            .end((err, res)=>{
+                if(err){
+                    return done(err);
+                }                
+                Todo.findById(hexId).then((todo)=>{
+                    expect(todo).toNotExist();
+                    done();
+
+                }).catch((e)=>done(e));                
+            })
+    });
+
+    it('should return 404 if todo is not found', (done)=>{
+        supertest_request(app)
+            .delete(`/todos/${hexId}`)
+            .expect(404)
+            .end(done);
+    });
+
+    it('should return 404 if object id is invalid', (done)=>{
+        supertest_request(app)
+            .delete(`/todos/123asb`)
+            .expect(404)
+            .end(done);
+    });
 })
