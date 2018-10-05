@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const express = require('express');  // server setup helper
 const bodyParser = require('body-parser'); // convert string to js format
-const {ObjectId} = require('mongodb');
+const {ObjectID} = require('mongodb');
 // Loc Imports
 var {mongoose}= require('./db/mongoose.js'); // Js destructuring (var from array or obj)
 var {Todo} = require('./models/todo');
@@ -39,7 +39,7 @@ app.get('/todos', (req, res)=>{
 app.get('/todos/:id', (req, res)=>{
     // res.send(req.params);
     var id = req.params.id;    
-    if(!ObjectId.isValid(id)) return res.status(404).send();    
+    if(!ObjectID.isValid(id)) return res.status(404).send();    
 
     Todo.findById(id).then((todo)=>{
         if(!todo) return res.status(404).send() ;        
@@ -52,7 +52,7 @@ app.get('/todos/:id', (req, res)=>{
 // DELETE POST
 app.delete('/todos/:id', (req, res)=>{
     var id = req.params.id;
-    if(!ObjectId.isValid(id)) return res.status(404).send();
+    if(!ObjectID.isValid(id)) return res.status(404).send();
     Todo.findByIdAndDelete(id).then((todo)=>{
         if(!todo) return res.status(404).send();  // if null was return, id was not found
         res.send({todo}); // assign as an obj|array in obj
@@ -70,7 +70,7 @@ app.patch('/todos/:id', (req,res)=>{
     var id = req.params.id;
     var body = _.pick(req.body, ['text', 'completed']); // prpty accessible to user
     
-    if(!ObjectId.isValid(id)){
+    if(!ObjectID.isValid(id)){
         return res.status(404).send();
     }
     

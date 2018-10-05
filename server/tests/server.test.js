@@ -6,26 +6,32 @@ const {app} = require('./../server'); // access server.js
 const{Todo} = require('./../models/todo'); // access todo.js
 
 
+// const todos = [{
+//     _id: new ObjectID(),
+//     text: 'First test todo'
+// }, {
+//     _id: new ObjectID(),
+//     text: 'Second test todo'
+// }];
 const todos = [{
     _id: new ObjectID(),
-    text: 'First test todo'
+    text: 'First test todo'   // completed: false,    // completedAt: null
+
 }, {
     _id: new ObjectID(),
-    text: 'Second test todo'
+    text: 'Second test todo',
+    completed: true,   
+    completedAt: new Date().getTime()
 }];
 
 
 // FOR TEST LEARNING PURPOSE, before each testing
-beforeEach((done)=>{
-    // Todo.remove({}).then(()=> {
-    Todo.deleteMany({}).then(()=> {
-        return Todo.insertMany(todos);
+beforeEach((done)=>{    // var hexId = todos[1]._id.toHexString();
+    Todo.deleteMany({}).then(()=> { // wipe the database
+        return Todo.insertMany(todos); // Insertion of Fake todos created above
     }).then(()=> done()); 
 });
-// // before each testing
-// beforeEach((done)=>{
-//     Todo.remove({}).then(()=> done()); // remove everything in the db Async (One after another)?
-// });
+
 
 describe('POST /todos', ()=>{
     it('should create a new todo', (done)=>{
@@ -115,7 +121,7 @@ describe('GET /todos/:id', ()=>{
 describe('DELETE /todos/:id', ()=>{
     var hexId = todos[1]._id.toHexString();
 
-    it('should remove a todo', (done)=>{        
+    it('should remove a todo', (done)=>{    
 
         supertest_request(app)
             .delete(`/todos/${hexId}`)
@@ -132,10 +138,11 @@ describe('DELETE /todos/:id', ()=>{
                     done();
 
                 }).catch((e)=>done(e));                
-            })
+            });
     });
 
     it('should return 404 if todo is not found', (done)=>{
+        var hexId = new ObjectID().toHexString();
         supertest_request(app)
             .delete(`/todos/${hexId}`)
             .expect(404)
@@ -148,4 +155,37 @@ describe('DELETE /todos/:id', ()=>{
             .expect(404)
             .end(done);
     });
-})
+});
+
+describe('PATCH /todos/:id', () => {
+    
+    it('should update the todo', (done) => {
+        var hexId = todos[0]._id.toHexString();
+        supertest_request(app)
+            .patch(`/todos/${hexId}`) // patch requesting            
+            .send({text: todos[0].text, completed: true}) // posting data
+            .expect(200)
+            .expect((res)=>{
+                expect(res.body.todo.text).toBe(todos[0].text);
+                expect(res.body.todo.completed).toBe(true);
+                expect(res.body.todo.completedAt).toBeA('number');
+                done();
+
+            }).catch((e)=>done(e));
+    });
+
+    it('should clear completedAt when todo is not completed', (done) => {
+        var hexId = todos[1]._id.toHexString();
+        supertest_request(app)
+            .patch(`/todos/${hexId}`)
+            .send({text:'diff text data', completed:false})
+            .expect(200)
+            .expect((res)=>{
+                expect(res.body.todo.text).toNotBe(todos[0].text);
+                expect(res.body.todo.completed).toBe(false);
+                expect(res.body.todo.completedAt).toNotExist();
+                done();
+
+            }).catch((e)=>done(e)); 
+    });
+});
