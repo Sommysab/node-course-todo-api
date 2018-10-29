@@ -89,6 +89,28 @@ app.patch('/todos/:id', (req,res)=>{
     });    
 });
 
+// POST /users
+app.post('/users', (req, res)=>{
+    // _ => return results from lodash
+    var body = _.pick(req.body, ['email', 'password']); // 'obj to pick from', array
+    // create new instance of User model
+    var user = new User(body);
+
+    // User //models
+    // user // instance
+    // User.findByToken
+    // user.generateAuthToken
+
+    // save to the db plus then callback for result access
+    user.save().then((user)=>{
+        return user.generateAuthToken(); // for a chain promise
+        // res.send(user); // specify success case?? || res.send(user) =>passing back the user        
+    }).then((token)=>{
+        res.header('x-auth', token).send(user); // return with a custome header
+    }).catch((e)=>{
+        res.status(400).send(e);
+    })
+});
 
 app.listen(port, ()=>{
     console.log(`Started on port ${port}`);
