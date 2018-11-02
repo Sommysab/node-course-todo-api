@@ -9,6 +9,7 @@ const {ObjectID} = require('mongodb');
 var {mongoose}= require('./db/mongoose.js'); // Js destructuring (var from array or obj)
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
+var {authenticate} = require('./middleware/authenticate');
 
 var app = express();
 const port = process.env.PORT;
@@ -90,16 +91,13 @@ app.patch('/todos/:id', (req,res)=>{
 });
 
 // POST /users
-app.post('/users', (req, res)=>{
+app.post('/users', (req, res)=>{    //console.log('res', res);  //console.log('req', req); return false;
     // _ => return results from lodash
-    var body = _.pick(req.body, ['email', 'password']); // 'obj to pick from', array
+    var body = _.pick(req.body, ['email', 'password']); // 'obj to pick from', array   //console.log(req.body);    //return false;
     // create new instance of User model
     var user = new User(body);
-
-    // User //models
-    // user // instance
-    // User.findByToken
-    // user.generateAuthToken
+    // User //models   // user // instance
+    // User.findByToken   // user.generateAuthToken
 
     // save to the db plus then callback for result access
     user.save().then((user)=>{
@@ -112,70 +110,16 @@ app.post('/users', (req, res)=>{
     })
 });
 
+// PRIVATE URL REQUEST
+app.get('/users/me', authenticate, (req,res)=>{ // modified
+    res.send(req.user);  
+})
+
 app.listen(port, ()=>{
     console.log(`Started on port ${port}`);
 });
 
 module.exports = {app};  // for testing
 
-
-// // Mongoose Model with attributes
-// var Todo = mongoose.model('Todo', {
-//     text: {
-//         type: String,
-//         required: true,        
-//         minlength: 1,
-//         trim: true
-//     },
-//     completed: {
-//         type: Boolean,
-//         default: false
-//     },
-//     completedAt: {
-//         type: Number,
-//         default: null
-//     }
-// });
-
-// // New todo value
-// var newTodo = new Todo({
-//     text: 'Cook dinner'
-// });
-// // Save created todo and Return Result
-// newTodo.save().then((doc) =>{
-//     console.log('Save todo', doc)
-// }, (e)=>{
-//     console.log('Unable to save todo');
-// });
-
-// var otherTodo = new Todo({
-//     text: 'Eat dinner',
-//     completed: true,
-//     completedAt: 123
-// });
-// otherTodo.save().then((doc)=>{
-//     // console.log('Save todo', doc)
-//     console.log(JSON.stringify(doc, undefined, 2));
-// }, (e)=>{
-//     console.log('Unable to save todo', e);
-// });
-
-// // Set User Model
-// var Users = mongoose.model('Users', {
-//     email: {
-//         type: String,
-//         required: true,        
-//         minlength: 1,
-//         trim: true
-//     }
-// });
-// // Create new
-// var newUsers = new Users({
-//     email: 'Sommysabudeh@g.com'
-// });
-// // Save and Return results
-// newUsers.save().then((doc)=>{
-//     console.log('Saved User Email', doc);
-// });
 
 

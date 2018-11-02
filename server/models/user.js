@@ -34,14 +34,14 @@ var UserSchema = new mongoose.Schema({
 });
 
 // overwrite a method
-UserSchema.methods.toJSON = function(){  // determing what is sent back
+UserSchema.methods.toJSON = function(){  // determining what is sent back
     var user = this;
     var userObject = user.toObject(); // converts mangoose variable to regular object where all properties on doc exist
 
     return _.pick(userObject, ['_id', 'email']);
 };
 
-// Created method
+// Created method 
 // instane method have access to individual document
 UserSchema.methods.generateAuthToken = function (){ // we need a this keyword for binding individual doc
     var user =this;
@@ -60,6 +60,26 @@ UserSchema.methods.generateAuthToken = function (){ // we need a this keyword fo
         return token;
     });
 };
+
+// MODEL METHD
+UserSchema.statics.findByToken = function(token){
+    var User = this;
+    var decoded;
+    try{
+        decoded = jwt.verify(token, 'abc123');
+    }catch (e){
+        // return new Proomise((resolve, reject)=>{
+        //     reject();
+        // })
+        return Promise.reject();
+    }
+
+    return User.findOne({
+        _id: decoded._id,
+        'tokens.token': token,
+        'tokens.access': 'auth'
+    })
+}
 
 // Set User Model
 var User = mongoose.model('User', UserSchema);
